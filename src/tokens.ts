@@ -103,6 +103,11 @@ export class FileTokenStore implements TokenStore {
     return parseTokens(text);
   }
 
+  /** Write tokens (owner-only permissions), replacing the file atomically. */
+  async save(tokens: Tokens): Promise<void> {
+    await this.write(tokens);
+  }
+
   private async write(tokens: Tokens): Promise<void> {
     await mkdir(path.dirname(this.file), { recursive: true, mode: 0o700 });
     const temp = `${this.file}.${randomBytes(6).toString("hex")}.tmp`;

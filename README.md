@@ -12,12 +12,14 @@ writes, and returns the same JSON as `gc`, so it can replace the CLI inside a No
 - **Metrics**: training readiness, training status, lactate threshold.
 - A raw `get(path, params)` for exploring endpoints.
 
-## Not included: logging in
+## Logging in
 
-Garmin's login flows are protected by a WAF that checks the TLS fingerprint of the client, which Node's `fetch` cannot
-imitate. Log in with `gc login` (Python) on a machine where it works, then share the token file, or import it with
-`gc login --manual --token-blob` using the output of `gc export-token`. After that, API calls and token refreshes work with
-plain HTTPS (checked against a real account: reads and refresh succeed without any impersonation).
+`garmin-ts login` (or `login()` from the library) signs in with Garmin's mobile (iOS) flow using plain `fetch` and saves
+the token file, with the credentials read from `GARMIN_LOGIN` (or `GARMIN_EMAIL`) and `GARMIN_PASSWORD` only. It worked
+without any TLS impersonation from a home network (checked against a real account), but this is the part most
+likely to be refused by Garmin's bot protection, depending on the client and the network (HTTP 429/403 is reported as such).
+Multi-factor accounts are not handled yet: use `gc login --wait-mfa`, then share the token file, or import it with
+`gc login --manual --token-blob` from `gc export-token`. Once tokens exist, API calls and refreshes work with plain HTTPS.
 
 ## Use
 
@@ -42,6 +44,7 @@ garmin-ts activities --start 2026-11-01 --end 2026-11-16
 garmin-ts activity 12345678901 splits        # also: hr-zones, weather, exercise-sets
 garmin-ts metrics training-readiness 2026-11-16
 garmin-ts api /userprofile-service/socialProfile
+garmin-ts login                               # needs GARMIN_LOGIN and GARMIN_PASSWORD in the environment
 garmin-ts token-info                          # expiry and refresh ability, never the token
 ```
 

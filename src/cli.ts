@@ -5,7 +5,9 @@ import { activityExerciseSets, activityHrZones, activitySplits, activityWeather,
 import { GarminClient } from "./client.ts";
 import { daily } from "./daily.ts";
 import { resolveShortcut } from "./dates.ts";
-import { GarminError } from "./errors.ts";
+import { GarminAuthError, GarminError } from "./errors.ts";
+import { login } from "./login.ts";
+import { FileTokenStore } from "./tokens.ts";
 import { lactateThreshold, trainingReadiness, trainingStatus } from "./metrics.ts";
 
 const USAGE = `garmin-ts <command> [options]
@@ -15,6 +17,7 @@ const USAGE = `garmin-ts <command> [options]
   activity <id> [splits|hr-zones|weather|exercise-sets]
   metrics <training-readiness|training-status> [date] | metrics lactate-threshold
   api <path> [--param key=value ...]     GET any Garmin Connect path (exploration)
+  login                                   sign in with $GARMIN_LOGIN (or $GARMIN_EMAIL) and $GARMIN_PASSWORD, save the tokens
   token-info                              expiry and refresh ability, never the token itself
 
 Options: --tokenstore FILE   token file (default: $GARMINTOKENS or ~/.config/garmin-cli/tokens/garmin_tokens.json)`;
@@ -38,6 +41,17 @@ async function main(): Promise<unknown> {
   if (!command || values.help) {
     console.log(USAGE);
     return undefined;
+  }
+  if (command === "login") {
+    // Credentials come from the environment only: a password on the command line ends up in shell history.
+    const email = process.env.GARMIN_LOGIN ?? process.env.GARMIN_EMAIL;
+    const password = process.env.GARMIN_PASSWORD;
+    if (!email || !password) throw new GarminError("error", "Set GARMIN_LOGIN (or GARMIN_EMAIL) and GARMIN_PASSWORD.");
+    const result = await login(email, password);
+    if (result.status === "needs_mfa") throw new GarminAuthError("This account asks for a multi-factor code, which this login does not handle yet: use `gc login --wait-mfa`.");
+    const store = new FileTokenStore(values.tokenstore);
+    await store.save(result.tokens);
+    return { loggedIn: true, tokenFile: store.file };
   }
   const client = GarminClient.fromFile(values.tokenstore);
   switch (command) {
