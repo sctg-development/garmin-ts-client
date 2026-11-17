@@ -8,6 +8,7 @@ import { resolveShortcut } from "./dates.ts";
 import { GarminAuthError, GarminError } from "./errors.ts";
 import { login } from "./login.ts";
 import { FileTokenStore } from "./tokens.ts";
+import { anchors } from "./anchors.ts";
 import { lactateThreshold, trainingReadiness, trainingStatus } from "./metrics.ts";
 
 const USAGE = `garmin-ts <command> [options]
@@ -15,7 +16,7 @@ const USAGE = `garmin-ts <command> [options]
   daily [date|today|yesterday|week|month] [--start D --end D] [--detail|--no-detail]
   activities [--start D --end D] [--type T]
   activity <id> [splits|hr-zones|weather|exercise-sets]
-  metrics <training-readiness|training-status> [date] | metrics lactate-threshold
+  metrics <training-readiness|training-status> [date] | metrics lactate-threshold | metrics anchors
   api <path> [--param key=value ...]     GET any Garmin Connect path (exploration)
   login                                   sign in with $GARMIN_LOGIN (or $GARMIN_EMAIL) and $GARMIN_PASSWORD, save the tokens
   token-info                              expiry and refresh ability, never the token itself
@@ -80,7 +81,8 @@ async function main(): Promise<unknown> {
       if (what === "training-readiness") return trainingReadiness(client, today);
       if (what === "training-status") return trainingStatus(client, today);
       if (what === "lactate-threshold") return lactateThreshold(client);
-      throw new GarminError("error", "metrics needs training-readiness, training-status or lactate-threshold.");
+      if (what === "anchors") return anchors(client);
+      throw new GarminError("error", "metrics needs training-readiness, training-status, lactate-threshold or anchors.");
     }
     case "api": {
       const [path] = rest;

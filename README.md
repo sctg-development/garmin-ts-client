@@ -9,7 +9,8 @@ writes, and returns the same JSON as `gc`, so it can replace the CLI inside a No
 - **`daily`**: one compact record per day (sleep, HRV, resting heart rate, respiration, SpO2, skin temperature, stress,
   body battery, activity), identical to `gc daily` (schema version 1). Every field is nullable; a missing value is `null`, never 0.
 - **Activities**: list by date range, and per-activity splits, heart-rate zones, weather, exercise sets.
-- **Metrics**: training readiness, training status, lactate threshold.
+- **Metrics**: training readiness, training status, lactate threshold, and `anchors` (lactate-threshold heart rate, FTP,
+  VO2 max from the current biometric profile, identical to `gc metrics anchors`).
 - A raw `get(path, params)` for exploring endpoints.
 
 ## Logging in
@@ -43,6 +44,7 @@ garmin-ts daily --start 2026-11-01 --end 2026-11-16 --no-detail
 garmin-ts activities --start 2026-11-01 --end 2026-11-16
 garmin-ts activity 12345678901 splits        # also: hr-zones, weather, exercise-sets
 garmin-ts metrics training-readiness 2026-11-16
+garmin-ts metrics anchors                     # lactate-threshold HR, FTP, VO2 max (null when unknown)
 garmin-ts api /userprofile-service/socialProfile
 garmin-ts login                               # needs GARMIN_LOGIN and GARMIN_PASSWORD in the environment
 garmin-ts token-info                          # expiry and refresh ability, never the token
