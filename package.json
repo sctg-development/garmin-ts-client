@@ -1,6 +1,6 @@
 {
   "name": "@sctg/garmin-ts-client",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Zero-dependency TypeScript client for Garmin Connect (read-only): token store with safe refresh, daily recovery records, activities and metrics.",
   "type": "module",
   "license": "MIT",
@@ -11,7 +11,7 @@
   "types": "./dist/index.d.ts",
   "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
   "bin": { "garmin-ts": "./dist/cli.js" },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": ["dist", "README.md", "LICENSE", "docs"],
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit -p tsconfig.test.json",

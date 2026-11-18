@@ -11,6 +11,12 @@ writes, and returns the same JSON as `gc`, so it can replace the CLI inside a No
 - **Activities**: list by date range, and per-activity splits, heart-rate zones, weather, exercise sets.
 - **Metrics**: training readiness, training status, lactate threshold, and `anchors` (lactate-threshold heart rate, FTP,
   VO2 max from the current biometric profile, identical to `gc metrics anchors`).
+- **Workouts**: list, get, download (FIT), scheduled, create, update, delete and training plans, ported from `gc workouts`
+  (same paths and payloads, so the coach no longer needs `gc` to push a session).
+- **Discovered endpoints** (`connect`): the ~95 read-only endpoints found in the Garmin Connect web app, by name
+  (`garmin-ts connect list`). They return the raw payload; the table is generated from `docs/garmin-connect.openapi.json`
+  by `tools/build_catalog.ts` and shared with `gc connect`. 86 of them were verified against a live account; a few need
+  query parameters the capture could not record (see `connect list` usage).
 - A raw `get(path, params)` for exploring endpoints.
 
 ## Logging in
@@ -19,8 +25,12 @@ writes, and returns the same JSON as `gc`, so it can replace the CLI inside a No
 the token file, with the credentials read from `GARMIN_LOGIN` (or `GARMIN_EMAIL`) and `GARMIN_PASSWORD` only. It worked
 without any TLS impersonation from a home network (checked against a real account), but this is the part most
 likely to be refused by Garmin's bot protection, depending on the client and the network (HTTP 429/403 is reported as such).
-Multi-factor accounts are not handled yet: use `gc login --wait-mfa`, then share the token file, or import it with
-`gc login --manual --token-blob` from `gc export-token`. Once tokens exist, API calls and refreshes work with plain HTTPS.
+Multi-factor accounts are handled the same way as `gc login`: the email/SMS code is asked on the terminal, or passed with
+`--mfa-code` / `$GARMIN_MFA_CODE` for scripts (the code is verified on the mobile endpoint, then the portal one, as
+garminconnect does). In code, `login()` returns `{ status: "needs_mfa", method, complete(code) }`. If Garmin's bot
+protection refuses this client, fall back to `gc login --wait-mfa` and share the token file (or import it with
+`gc login --manual --token-blob` from `gc export-token`); `gc` is the last resort, not the default. Once tokens exist,
+API calls and refreshes work with plain HTTPS.
 
 ## Use
 
@@ -45,6 +55,10 @@ garmin-ts activities --start 2026-11-01 --end 2026-11-16
 garmin-ts activity 12345678901 splits        # also: hr-zones, weather, exercise-sets
 garmin-ts metrics training-readiness 2026-11-16
 garmin-ts metrics anchors                     # lactate-threshold HR, FTP, VO2 max (null when unknown)
+garmin-ts connect list                        # every discovered endpoint with its usage
+garmin-ts connect hrv-daily week              # raw payload; dates accept today/yesterday/week/month
+garmin-ts connect wellness-daily-heart-rate --param date=2026-11-16
+garmin-ts workouts create --name "Easy 5k" --sport running --steps '[...]'   # also get/update/delete/download/training-plans
 garmin-ts api /userprofile-service/socialProfile
 garmin-ts login                               # needs GARMIN_LOGIN and GARMIN_PASSWORD in the environment
 garmin-ts token-info                          # expiry and refresh ability, never the token

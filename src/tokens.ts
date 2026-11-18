@@ -31,7 +31,7 @@ export function parseTokens(text: string): Tokens {
   }
   const record = (data ?? {}) as Record<string, unknown>;
   const access = record.di_token;
-  if (typeof access !== "string" || !access) throw new GarminAuthError("No Garmin session in the token data: run `gc login` first.");
+  if (typeof access !== "string" || !access) throw new GarminAuthError("No Garmin session in the token data: run `garmin-ts login` first.");
   const text_ = (value: unknown) => (typeof value === "string" && value ? value : null);
   return { di_token: access, di_refresh_token: text_(record.di_refresh_token), di_client_id: text_(record.di_client_id) };
 }
@@ -98,7 +98,7 @@ export class FileTokenStore implements TokenStore {
     try {
       text = await readFile(this.file, "utf8");
     } catch {
-      throw new GarminAuthError("Not logged in: no token file. Run `gc login` first.");
+      throw new GarminAuthError("Not logged in: no token file. Run `garmin-ts login` first.");
     }
     return parseTokens(text);
   }

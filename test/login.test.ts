@@ -48,7 +48,8 @@ test("the exchange tries the next client id when one is refused", async () => {
 
 test("multi-factor, wrong password and rate limiting are reported distinctly", async () => {
   const mfa = fakeGarmin({ responseStatus: { type: "MFA_REQUIRED" } });
-  assert.deepEqual(await login("a", "b", { fetch: mfa.impl, delayMs: () => 0 }), { status: "needs_mfa" });
+  const pending = await login("a", "b", { fetch: mfa.impl, delayMs: () => 0 });
+  assert.equal(pending.status, "needs_mfa");
   const wrong = fakeGarmin({ responseStatus: { type: "INVALID_USERNAME_PASSWORD" } });
   await assert.rejects(login("a", "b", { fetch: wrong.impl, delayMs: () => 0 }), GarminAuthError);
   const limited = fakeGarmin({}, { loginStatus: 429 });
@@ -60,4 +61,55 @@ test("an error never carries the password", async () => {
   await login("me@example.org", "s3cret-pw", { fetch: wrong.impl, delayMs: () => 0 }).catch((error: Error) => {
     assert.ok(!error.message.includes("s3cret-pw") && !error.message.includes("me@example.org"));
   });
+});
+
+/** A fake SSO that asks for a code, then answers each verifyCode endpoint with the given bodies. */
+function fakeMfa(verify: { mobile: [number, unknown]; portal?: [number, unknown] }) {
+  const seen: Seen[] = [];
+  const impl = (async (input: string | URL | Request, init?: RequestInit) => {
+    const url = String(input);
+    seen.push({ url, method: init?.method ?? "GET", headers: (init?.headers ?? {}) as Record<string, string>, body: String(init?.body ?? "") });
+    if (url.includes("/mobile/sso/en_US/sign-in")) return new Response("<html></html>", { status: 200, headers: { "set-cookie": "SESSION=abc; Path=/" } });
+    if (url.includes("/mobile/api/login")) return new Response(JSON.stringify({ responseStatus: { type: "MFA_REQUIRED" }, customerMfaInfo: { mfaLastMethodUsed: "sms" } }));
+    if (url.includes("/mobile/api/mfa/verifyCode")) return new Response(JSON.stringify(verify.mobile[1]), { status: verify.mobile[0] });
+    if (url.includes("/portal/api/mfa/verifyCode")) return new Response(JSON.stringify(verify.portal?.[1] ?? {}), { status: verify.portal?.[0] ?? 200 });
+    return new Response(JSON.stringify({ access_token: jwt, refresh_token: "R" }), { status: 200 });
+  }) as typeof fetch;
+  return { impl, seen };
+}
+
+test("a multi-factor code is verified with the session cookies and yields tokens", async () => {
+  const { impl, seen } = fakeMfa({ mobile: [200, { responseStatus: { type: "SUCCESSFUL" }, serviceTicketId: "ST-9" }] });
+  const pending = await login("a", "b", { fetch: impl, delayMs: () => 0 });
+  assert.equal(pending.status, "needs_mfa");
+  if (pending.status !== "needs_mfa") return;
+  assert.equal(pending.method, "sms");
+  const tokens = await pending.complete("123456");
+  assert.equal(tokens.di_refresh_token, "R");
+  const verify = seen.find((s) => s.url.includes("/mobile/api/mfa/verifyCode"));
+  assert.equal(verify?.headers.Cookie, "SESSION=abc");
+  assert.deepEqual(JSON.parse(verify?.body ?? "{}"), { mfaMethod: "sms", mfaVerificationCode: "123456", rememberMyBrowser: true, reconsentList: [], mfaSetup: false });
+  assert.match(seen.at(-1)?.body ?? "", /service_ticket=ST-9/);
+});
+
+test("the portal endpoint is the fallback when the mobile one refuses the code", async () => {
+  const { impl, seen } = fakeMfa({ mobile: [200, { responseStatus: { type: "MFA_CODE_INVALID" } }], portal: [200, { responseStatus: { type: "SUCCESSFUL" }, serviceTicketId: "ST-2" }] });
+  const pending = await login("a", "b", { fetch: impl, delayMs: () => 0 });
+  if (pending.status !== "needs_mfa") throw new Error("expected needs_mfa");
+  await pending.complete("111111");
+  assert.ok(seen.some((s) => s.url.includes("/portal/api/mfa/verifyCode")));
+});
+
+test("a wrong code fails with the reasons but never the response body", async () => {
+  const { impl } = fakeMfa({ mobile: [200, { responseStatus: { type: "MFA_CODE_INVALID" }, serviceTicketId: "SECRET-TICKET" }], portal: [200, { responseStatus: { type: "MFA_CODE_INVALID" } }] });
+  const pending = await login("a", "b", { fetch: impl, delayMs: () => 0 });
+  if (pending.status !== "needs_mfa") throw new Error("expected needs_mfa");
+  await assert.rejects(pending.complete("000000"), (error: Error) => error instanceof GarminAuthError && /MFA_CODE_INVALID/.test(error.message) && !/SECRET/.test(error.message));
+});
+
+test("rate limiting on every verify endpoint is reported as such", async () => {
+  const { impl } = fakeMfa({ mobile: [429, {}], portal: [429, {}] });
+  const pending = await login("a", "b", { fetch: impl, delayMs: () => 0 });
+  if (pending.status !== "needs_mfa") throw new Error("expected needs_mfa");
+  await assert.rejects(pending.complete("1"), GarminRateLimitError);
 });

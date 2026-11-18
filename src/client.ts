@@ -1,7 +1,7 @@
 /**
  * Garmin Connect API client. After login, Garmin's API answers plain HTTPS requests that carry the
  * mobile-app headers and a Bearer token, so no TLS impersonation is needed here. Logging in is not
- * done by this package: run `gc login` (or any garminconnect-based login) and share the token file.
+ * done by this package: run `garmin-ts login` (or any garminconnect-based login such as `gc login`) and share the token file.
  */
 import { GarminAuthError, GarminError, GarminRateLimitError } from "./errors.ts";
 import { FileTokenStore, MemoryTokenStore, parseTokens, tokenClientId, tokenExpiry, type TokenStore, type Tokens } from "./tokens.ts";
@@ -23,7 +23,13 @@ const NATIVE_HEADERS: Record<string, string> = {
 const REFRESH_MARGIN_S = 900;
 
 export type Query = Record<string, string | number | boolean | undefined>;
-export type RequestOptions = { params?: Query; json?: unknown; timeoutMs?: number };
+export type RequestOptions = {
+  params?: Query;
+  json?: unknown;
+  timeoutMs?: number;
+  /** Return the response body as a Buffer instead of parsing JSON (FIT downloads). */
+  raw?: boolean;
+};
 
 export type GarminClientOptions = {
   store?: TokenStore;
@@ -65,7 +71,7 @@ export class GarminClient {
     this.now = options.now ?? Date.now;
   }
 
-  /** From a token file (default: the one `gc login` writes). */
+  /** From a token file (default: the one `garmin-ts login` or `gc login` writes). */
   static fromFile(file?: string, options: Omit<GarminClientOptions, "store"> = {}): GarminClient {
     return new GarminClient({ ...options, store: new FileTokenStore(file) });
   }
@@ -120,7 +126,7 @@ export class GarminClient {
 
   private async exchange(tokens: Tokens): Promise<Tokens> {
     const clientId = tokens.di_client_id ?? tokenClientId(tokens.di_token);
-    if (!tokens.di_refresh_token || !clientId) throw new GarminAuthError("No refresh token: run `gc login` again.");
+    if (!tokens.di_refresh_token || !clientId) throw new GarminAuthError("No refresh token: run `garmin-ts login` again.");
     const response = await this.doFetch(this.authUrl, {
       method: "POST",
       headers: {
@@ -136,7 +142,7 @@ export class GarminClient {
       throw new GarminError("connection", `Could not reach Garmin auth: ${error instanceof Error ? error.message : "network error"}`);
     });
     if (response.status === 429) throw new GarminRateLimitError("Garmin rate limited the token refresh.");
-    if (!response.ok) throw new GarminAuthError(`Token refresh refused (HTTP ${response.status}): run \`gc login\` again.`, response.status);
+    if (!response.ok) throw new GarminAuthError(`Token refresh refused (HTTP ${response.status}): run \`garmin-ts login\` again.`, response.status);
     const data = (await response.json().catch(() => null)) as { access_token?: unknown; refresh_token?: unknown } | null;
     if (!data || typeof data.access_token !== "string") throw new GarminAuthError("Token refresh returned no access token.");
     return {
@@ -168,7 +174,7 @@ export class GarminClient {
             headers: {
               ...NATIVE_HEADERS,
               Authorization: `Bearer ${tokens.di_token}`,
-              Accept: "application/json",
+              Accept: options.raw ? "*/*" : "application/json",
               ...(options.json !== undefined ? { "Content-Type": "application/json" } : {}),
             },
             body: options.json !== undefined ? JSON.stringify(options.json) : undefined,
@@ -186,7 +192,7 @@ export class GarminClient {
           tokens = await this.refresh();
           continue;
         }
-        if (response.status === 401 || response.status === 403) throw new GarminAuthError(`Authentication failed (HTTP ${response.status}): run \`gc login\` again.`, response.status);
+        if (response.status === 401 || response.status === 403) throw new GarminAuthError(`Authentication failed (HTTP ${response.status}): run \`garmin-ts login\` again.`, response.status);
         if (response.status === 429) throw new GarminRateLimitError("Garmin Connect is rate limiting requests: wait before retrying.");
         if (response.status >= 500 && attempt < this.retries) {
           await backoff(attempt);
@@ -195,6 +201,7 @@ export class GarminClient {
         if (response.status === 204) return null as T;
         if (response.status === 404) throw new GarminError("not_found", "Garmin has no such resource (HTTP 404).", 404);
         if (!response.ok) throw new GarminError(response.status >= 500 ? "connection" : "error", `Garmin API error (HTTP ${response.status}).`, response.status);
+        if (options.raw) return Buffer.from(await response.arrayBuffer()) as T;
         const text = await response.text();
         if (!text) return null as T;
         try {
