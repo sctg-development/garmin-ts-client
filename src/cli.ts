@@ -5,13 +5,13 @@ import { parseArgs } from "node:util";
 import { activityExerciseSets, activityHrZones, activitySplits, activityWeather, getActivity, listActivities } from "./activities.ts";
 import { GarminClient } from "./client.ts";
 import { daily } from "./daily.ts";
-import { resolveShortcut } from "./dates.ts";
+import { addDays, resolveShortcut } from "./dates.ts";
 import { GarminAuthError, GarminError } from "./errors.ts";
 import { login } from "./login.ts";
 import { FileTokenStore } from "./tokens.ts";
 import { anchors } from "./anchors.ts";
 import { CATALOG, connect, usage } from "./connect.ts";
-import { lactateThreshold, trainingReadiness, trainingStatus } from "./metrics.ts";
+import { lactateThreshold, maxMet, trainingLoadBalance, trainingReadiness, trainingStatus } from "./metrics.ts";
 import { createWorkout, deleteWorkout, downloadWorkout, getAdaptiveTrainingPlan, getScheduledWorkout, getTrainingPlan, getWorkout, listTrainingPlans, listWorkouts, loadWorkoutFile, updateWorkout, type WorkoutInput } from "./workouts.ts";
 import { writeFile } from "node:fs/promises";
 
@@ -20,7 +20,7 @@ const USAGE = `garmin-ts <command> [options]
   daily [date|today|yesterday|week|month] [--start D --end D] [--detail|--no-detail]
   activities [--start D --end D] [--type T]
   activity <id> [splits|hr-zones|weather|exercise-sets]
-  metrics <training-readiness|training-status> [date] | metrics lactate-threshold | metrics anchors
+  metrics <training-readiness|training-status|load-balance> [date] | metrics maxmet [--start D --end D] | metrics lactate-threshold | metrics anchors
   workouts [--start N --limit N] | workouts <get|download|scheduled|delete> <id> [--output FILE]
   workouts <create|update <id>> [--name N --sport S --sport-id N --steps JSON | --file F]
   workouts training-plans [get|adaptive <id>]
@@ -113,7 +113,13 @@ async function main(): Promise<unknown> {
       if (what === "training-status") return trainingStatus(client, today);
       if (what === "lactate-threshold") return lactateThreshold(client);
       if (what === "anchors") return anchors(client);
-      throw new GarminError("error", "metrics needs training-readiness, training-status, lactate-threshold or anchors.");
+      if (what === "load-balance") return trainingLoadBalance(client, today);
+      if (what === "maxmet") {
+        // Default window: the last 60 days, enough for a trend and for the acclimation baseline.
+        const end = values.end ?? today;
+        return maxMet(client, values.start ?? addDays(end, -60), end);
+      }
+      throw new GarminError("error", "metrics needs training-readiness, training-status, load-balance, maxmet, lactate-threshold or anchors.");
     }
     case "workouts": {
       const [sub, id] = rest;

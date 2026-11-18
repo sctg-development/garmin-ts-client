@@ -10,6 +10,20 @@ const day = (value: string) => {
 export const trainingReadiness = (client: GarminClient, date: string) => client.get(`/metrics-service/metrics/trainingreadiness/${day(date)}`);
 export const trainingStatus = (client: GarminClient, date: string) => client.get(`/metrics-service/metrics/trainingstatus/aggregated/${day(date)}`);
 
+/**
+ * Training load balance as of `date`: the rolling 30-day load split into aerobic low, aerobic high and
+ * anaerobic, with Garmin's target range for each and a feedback phrase. There is no weekly or monthly
+ * endpoint (404): the monthly figures are already a 30-day window, and a longer series comes from calling
+ * this for several past dates (checked: each date returns its own values).
+ */
+export const trainingLoadBalance = (client: GarminClient, date: string) => client.get(`/metrics-service/metrics/trainingloadbalance/latest/${day(date)}`);
+
+/**
+ * VO2 max history, one entry per day Garmin updated it. Each entry also carries the heat and altitude
+ * acclimation block, so no separate acclimation call is needed.
+ */
+export const maxMet = (client: GarminClient, start: string, end: string) => client.get(`/metrics-service/metrics/maxmet/daily/${day(start)}/${day(end)}`);
+
 type Obj = Record<string, unknown>;
 
 /** Latest lactate threshold (speed, heart rate) and running power, as one object like `gc metrics lactate-threshold`. */
