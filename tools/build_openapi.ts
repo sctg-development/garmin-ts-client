@@ -232,6 +232,9 @@ function findDisplayNames(paths: string[], explicit: string[]): Set<string> {
   return names;
 }
 
+/** 20+ hex digits (a GUID without dashes), possibly with `{id}` placeholders where digit runs were rewritten. */
+const HEX_ID = /^(?=.*[a-f{])(?:[0-9a-f]|\{id\}){20,}$/i;
+
 /** Path parameter name inferred from the previous segment (the API is not self-describing). */
 const PARAM_BY_PREV: Record<string, string> = {
   activity: "activityId",
@@ -250,6 +253,11 @@ const PARAM_BY_PREV: Record<string, string> = {
  */
 function parametrise(path: string, displayNames: Set<string>): { template: string; params: PathParam[] } {
   const segments = path.split("/");
+  // `curated/FR/<region>/<course>` (and the `/app/trails/...` page route) names a place near the account: keep the shape, drop the place.
+  const curated = segments.findIndex((segment) => segment === "curated" || segment === "trails");
+  if (curated >= 0 && /^[A-Z]{2}$/.test(segments[curated + 1] ?? "") && segments.length > curated + 3) {
+    segments.splice(curated + 1, 3, "{country}", "{region}", "{course}");
+  }
   const dateCount = segments.filter((segment) => segment === "{date}").length;
   const out: string[] = [];
   const params: PathParam[] = [];
@@ -270,9 +278,16 @@ function parametrise(path: string, displayNames: Set<string>): { template: strin
     } else if (segment === "{id}") {
       name = prev === "daily" ? "userProfileId" : (PARAM_BY_PREV[prev] ?? "id");
       schema = { type: "integer", format: "int64" };
-    } else if (segment === "{guid}") {
+    } else if ((HEX_ID.test(segment) || segment === "{guid}") && prev !== "preference") {
+      // Garmin ids such as gear, segment and challenge ids are 32-digit hex strings. The discovery hook
+      // sometimes rewrote the digit runs inside them as `{id}`, so those mangled forms are included.
       name = "guid";
       schema = { type: "string", format: "uuid" };
+    } else if (prev === "preference" && segment !== "{preferenceKey}") {
+      // Preference keys (and the opaque ids the web app also stores under /modern/preference) are
+      // account state, not API surface: one placeholder for all of them.
+      name = "preferenceKey";
+      schema = { type: "string" };
     } else if (segment === "{email}") {
       name = "email";
       schema = { type: "string" };

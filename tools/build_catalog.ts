@@ -95,10 +95,15 @@ export function renderTs(entries: CatalogEntry[]): string {
   return `// ${HEADER}\n/** One read-only Garmin Connect endpoint discovered from the web app. */\nexport type CatalogEntry = { name: string; path: string; params: string[]; query: string[]; service: string };\n\nexport const CATALOG: CatalogEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
 }
 
-/** Render the Python module (a literal, so PyInstaller needs no data-file handling). */
+/**
+ * Render the Python module. The entries are embedded as a JSON string and parsed at import: converting
+ * JSON literals to Python ones with a regex would also rewrite a path segment that happens to be `null`.
+ * A plain module (not a data file) keeps PyInstaller builds free of data-file handling.
+ */
 export function renderPy(entries: CatalogEntry[]): string {
-  const json = JSON.stringify(entries, null, 4).replace(/\btrue\b/g, "True").replace(/\bfalse\b/g, "False").replace(/\bnull\b/g, "None");
-  return `"""${HEADER}"""\n\nfrom typing import Any\n\nCATALOG: list[dict[str, Any]] = ${json}\n`;
+  const json = JSON.stringify(entries, null, 2);
+  if (json.includes('"""') || json.includes("\\")) throw new Error("catalog entries must not contain backslashes or triple quotes");
+  return `"""${HEADER}"""\n\nimport json\nfrom typing import Any\n\nCATALOG: list[dict[str, Any]] = json.loads(\n    r"""${json}"""\n)\n`;
 }
 
 async function main(): Promise<void> {

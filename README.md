@@ -15,7 +15,7 @@ writes, and returns the same JSON as `gc`, so it can replace the CLI inside a No
   (same paths and payloads, so the coach no longer needs `gc` to push a session).
 - **Discovered endpoints** (`connect`): the ~95 read-only endpoints found in the Garmin Connect web app, by name
   (`garmin-ts connect list`). They return the raw payload; the table is generated from `docs/garmin-connect.openapi.json`
-  by `tools/build_catalog.ts` and shared with `gc connect`. 86 of them were verified against a live account; a few need
+  by `tools/build_catalog.ts` and shared with `gc connect`. 157 of them answered a read-only probe on a live account; some need
   query parameters the capture could not record (see `connect list` usage).
 - A raw `get(path, params)` for exploring endpoints.
 

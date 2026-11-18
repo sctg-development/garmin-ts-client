@@ -13,15 +13,80 @@ export const CATALOG: CatalogEntry[] = [
     "service": "activity-service"
   },
   {
+    "name": "activity-connect-iqdisplay-info",
+    "path": "/activity-service/activity/{activityId}/connectIQDisplayInfo",
+    "params": [
+      "activityId"
+    ],
+    "query": [],
+    "service": "activity-service"
+  },
+  {
     "name": "activity-details",
     "path": "/activity-service/activity/{activityId}/details",
     "params": [
       "activityId"
     ],
     "query": [
+      "enabled",
       "maxChartSize",
+      "maxHeatMapSize",
       "maxPolylineSize"
     ],
+    "service": "activity-service"
+  },
+  {
+    "name": "activity-event-types",
+    "path": "/activity-service/activity/eventTypes",
+    "params": [],
+    "query": [],
+    "service": "activity-service"
+  },
+  {
+    "name": "activity-hr-time-in-zones",
+    "path": "/activity-service/activity/{activityId}/hrTimeInZones",
+    "params": [
+      "activityId"
+    ],
+    "query": [],
+    "service": "activity-service"
+  },
+  {
+    "name": "activity-mapdetails",
+    "path": "/activity-service/activity/{activityId}/mapdetails",
+    "params": [
+      "activityId"
+    ],
+    "query": [
+      "maxPolylineSize"
+    ],
+    "service": "activity-service"
+  },
+  {
+    "name": "activity-running-form-details",
+    "path": "/activity-service/activity/{activityId}/running-form-details",
+    "params": [
+      "activityId"
+    ],
+    "query": [],
+    "service": "activity-service"
+  },
+  {
+    "name": "activity-split_summaries",
+    "path": "/activity-service/activity/{activityId}/split_summaries",
+    "params": [
+      "activityId"
+    ],
+    "query": [],
+    "service": "activity-service"
+  },
+  {
+    "name": "activity-splits",
+    "path": "/activity-service/activity/{activityId}/splits",
+    "params": [
+      "activityId"
+    ],
+    "query": [],
     "service": "activity-service"
   },
   {
@@ -37,6 +102,26 @@ export const CATALOG: CatalogEntry[] = [
     "name": "activity-types",
     "path": "/activity-service/activity/activityTypes",
     "params": [],
+    "query": [],
+    "service": "activity-service"
+  },
+  {
+    "name": "activity-weather",
+    "path": "/activity-service/activity/{activityId}/weather",
+    "params": [
+      "activityId"
+    ],
+    "query": [
+      "enabled"
+    ],
+    "service": "activity-service"
+  },
+  {
+    "name": "activity-workouts",
+    "path": "/activity-service/activity/{activityId}/workouts",
+    "params": [
+      "activityId"
+    ],
     "query": [],
     "service": "activity-service"
   },
@@ -76,6 +161,13 @@ export const CATALOG: CatalogEntry[] = [
     "service": "activitylist-service"
   },
   {
+    "name": "activitylist-activities-first-last",
+    "path": "/activitylist-service/activities/first-last",
+    "params": [],
+    "query": [],
+    "service": "activitylist-service"
+  },
+  {
     "name": "activitylist-activities-fordailysummary",
     "path": "/activitylist-service/activities/fordailysummary/{displayName}",
     "params": [
@@ -83,6 +175,18 @@ export const CATALOG: CatalogEntry[] = [
     ],
     "query": [
       "calendarDate"
+    ],
+    "service": "activitylist-service"
+  },
+  {
+    "name": "activitylist-activities-gear",
+    "path": "/activitylist-service/activities/{guid}/gear",
+    "params": [
+      "guid"
+    ],
+    "query": [
+      "limit",
+      "start"
     ],
     "service": "activitylist-service"
   },
@@ -102,6 +206,16 @@ export const CATALOG: CatalogEntry[] = [
     "service": "activitylist-service"
   },
   {
+    "name": "activitylist-activities-search-activities",
+    "path": "/activitylist-service/activities/search/activities",
+    "params": [],
+    "query": [
+      "limit",
+      "start"
+    ],
+    "service": "activitylist-service"
+  },
+  {
     "name": "activitylist-activities-v2-newsfeed-status",
     "path": "/activitylist-service/activities/v2/newsfeed/status",
     "params": [],
@@ -111,11 +225,143 @@ export const CATALOG: CatalogEntry[] = [
     "service": "activitylist-service"
   },
   {
+    "name": "adhocchallenge-ad-hoc-challenge-historical",
+    "path": "/adhocchallenge-service/adHocChallenge/historical",
+    "params": [],
+    "query": [
+      "limit",
+      "start"
+    ],
+    "service": "adhocchallenge-service"
+  },
+  {
+    "name": "adhocchallenge-ad-hoc-challenge-non-completed",
+    "path": "/adhocchallenge-service/adHocChallenge/nonCompleted",
+    "params": [],
+    "query": [
+      "limit",
+      "start"
+    ],
+    "service": "adhocchallenge-service"
+  },
+  {
+    "name": "badgechallenge-badge-challenge",
+    "path": "/badgechallenge-service/badgeChallenge/{guid}",
+    "params": [
+      "guid"
+    ],
+    "query": [],
+    "service": "badgechallenge-service"
+  },
+  {
+    "name": "badgechallenge-badge-challenge-available",
+    "path": "/badgechallenge-service/badgeChallenge/available",
+    "params": [],
+    "query": [
+      "includeExclusive",
+      "limit",
+      "start"
+    ],
+    "service": "badgechallenge-service"
+  },
+  {
+    "name": "badgechallenge-badge-challenge-completed",
+    "path": "/badgechallenge-service/badgeChallenge/completed",
+    "params": [],
+    "query": [
+      "desc",
+      "includeExclusive",
+      "limit",
+      "start"
+    ],
+    "service": "badgechallenge-service"
+  },
+  {
+    "name": "badgechallenge-badge-challenge-non-completed",
+    "path": "/badgechallenge-service/badgeChallenge/non-completed",
+    "params": [],
+    "query": [
+      "desc",
+      "includeExclusive",
+      "limit",
+      "start"
+    ],
+    "service": "badgechallenge-service"
+  },
+  {
+    "name": "badgechallenge-virtual-challenge-available",
+    "path": "/badgechallenge-service/virtualChallenge/available",
+    "params": [],
+    "query": [
+      "limit"
+    ],
+    "service": "badgechallenge-service"
+  },
+  {
+    "name": "badgechallenge-virtual-challenge-completed",
+    "path": "/badgechallenge-service/virtualChallenge/completed",
+    "params": [],
+    "query": [
+      "desc",
+      "limit",
+      "start"
+    ],
+    "service": "badgechallenge-service"
+  },
+  {
+    "name": "badgechallenge-virtual-challenge-in-progress",
+    "path": "/badgechallenge-service/virtualChallenge/inProgress",
+    "params": [],
+    "query": [
+      "desc",
+      "limit",
+      "start"
+    ],
+    "service": "badgechallenge-service"
+  },
+  {
+    "name": "biometric-heart-rate-zones",
+    "path": "/biometric-service/heartRateZones",
+    "params": [],
+    "query": [],
+    "service": "biometric-service"
+  },
+  {
+    "name": "biometric-heart-rate-zones-v2",
+    "path": "/biometric-service/heartRateZones/v2",
+    "params": [],
+    "query": [
+      "generateDefaults"
+    ],
+    "service": "biometric-service"
+  },
+  {
+    "name": "biometric-latest-lactate-threshold",
+    "path": "/biometric-service/biometric/latestLactateThreshold",
+    "params": [],
+    "query": [],
+    "service": "biometric-service"
+  },
+  {
     "name": "biometric-power-to-weight-latest",
     "path": "/biometric-service/biometric/powerToWeight/latest/{date}",
     "params": [
       "date"
     ],
+    "query": [],
+    "service": "biometric-service"
+  },
+  {
+    "name": "biometric-power-zones-sport-cycling",
+    "path": "/biometric-service/powerZones/sport/CYCLING",
+    "params": [],
+    "query": [],
+    "service": "biometric-service"
+  },
+  {
+    "name": "biometric-power-zones-sports-all",
+    "path": "/biometric-service/powerZones/sports/all",
+    "params": [],
     "query": [],
     "service": "biometric-service"
   },
@@ -185,6 +431,18 @@ export const CATALOG: CatalogEntry[] = [
     "service": "bloodpressure-service"
   },
   {
+    "name": "calendar-events",
+    "path": "/calendar-service/events",
+    "params": [],
+    "query": [
+      "endDate",
+      "eventType",
+      "includeOnlyWithoutCourse",
+      "startDate"
+    ],
+    "service": "calendar-service"
+  },
+  {
     "name": "calendar-events-upcoming",
     "path": "/calendar-service/events/upcoming",
     "params": [],
@@ -195,6 +453,121 @@ export const CATALOG: CatalogEntry[] = [
       "startDate"
     ],
     "service": "calendar-service"
+  },
+  {
+    "name": "challenge-active",
+    "path": "/challenge-service/challenge/active",
+    "params": [],
+    "query": [],
+    "service": "challenge-service"
+  },
+  {
+    "name": "challenge-previous",
+    "path": "/challenge-service/challenge/previous",
+    "params": [],
+    "query": [],
+    "service": "challenge-service"
+  },
+  {
+    "name": "consumer-capabilities-for-user",
+    "path": "/consumer-service/consumer/capabilitiesForUser/{guid}",
+    "params": [
+      "guid"
+    ],
+    "query": [],
+    "service": "consumer-service"
+  },
+  {
+    "name": "course",
+    "path": "/course-service/course/{id}",
+    "params": [
+      "id"
+    ],
+    "query": [],
+    "service": "course-service"
+  },
+  {
+    "name": "course-curated",
+    "path": "/course-service/curated/{id}",
+    "params": [
+      "id"
+    ],
+    "query": [],
+    "service": "course-service"
+  },
+  {
+    "name": "course-curated-matching-candidates",
+    "path": "/course-service/curated/matching/candidates/{id}",
+    "params": [
+      "id"
+    ],
+    "query": [],
+    "service": "course-service"
+  },
+  {
+    "name": "course-favorites",
+    "path": "/course-service/course/favorites",
+    "params": [],
+    "query": [],
+    "service": "course-service"
+  },
+  {
+    "name": "course-lines",
+    "path": "/course-service/course/{id}/lines",
+    "params": [
+      "id"
+    ],
+    "query": [],
+    "service": "course-service"
+  },
+  {
+    "name": "course-minimaps",
+    "path": "/course-service/course/minimaps",
+    "params": [],
+    "query": [
+      "coordinateSystem",
+      "courseId"
+    ],
+    "service": "course-service"
+  },
+  {
+    "name": "course-onroute-features",
+    "path": "/course-service/course/{id}/onroute-features",
+    "params": [
+      "id"
+    ],
+    "query": [
+      "fetchClimbs",
+      "fetchHazards",
+      "fetchHighTrafficSections",
+      "fetchUnpavedSections"
+    ],
+    "service": "course-service"
+  },
+  {
+    "name": "course-owner-by-0",
+    "path": "/web-gateway/course/owner",
+    "params": [],
+    "query": [],
+    "service": "course"
+  },
+  {
+    "name": "course-owner-by-1",
+    "path": "/course-service/course/owner/{displayName}",
+    "params": [
+      "displayName"
+    ],
+    "query": [],
+    "service": "course-service"
+  },
+  {
+    "name": "course-pacebands-summaries",
+    "path": "/course-service/pacebands/summaries",
+    "params": [],
+    "query": [
+      "courseId"
+    ],
+    "service": "course-service"
   },
   {
     "name": "device-deviceregistration-devices",
@@ -220,6 +593,24 @@ export const CATALOG: CatalogEntry[] = [
     "service": "device-service"
   },
   {
+    "name": "device-deviceservice-app-info",
+    "path": "/device-service/deviceservice/app-info/{id}",
+    "params": [
+      "id"
+    ],
+    "query": [],
+    "service": "device-service"
+  },
+  {
+    "name": "device-deviceservice-device-info-all",
+    "path": "/device-service/deviceservice/device-info/all/{displayName}",
+    "params": [
+      "displayName"
+    ],
+    "query": [],
+    "service": "device-service"
+  },
+  {
     "name": "device-deviceservice-userlastused",
     "path": "/device-service/deviceservice/userlastused/{displayName}",
     "params": [
@@ -236,6 +627,20 @@ export const CATALOG: CatalogEntry[] = [
     "service": "device-info"
   },
   {
+    "name": "devicebackup-backup",
+    "path": "/devicebackup-service/backup",
+    "params": [],
+    "query": [],
+    "service": "devicebackup-service"
+  },
+  {
+    "name": "devicebackup-backup-summary",
+    "path": "/devicebackup-service/backup/summary",
+    "params": [],
+    "query": [],
+    "service": "devicebackup-service"
+  },
+  {
     "name": "fitnessage",
     "path": "/fitnessage-service/fitnessage/{date}",
     "params": [
@@ -250,6 +655,16 @@ export const CATALOG: CatalogEntry[] = [
     "params": [
       "startDate",
       "endDate"
+    ],
+    "query": [],
+    "service": "fitnessage-service"
+  },
+  {
+    "name": "fitnessage-stats-weekly",
+    "path": "/fitnessage-service/stats/weekly/{date}/{weeks}",
+    "params": [
+      "date",
+      "weeks"
     ],
     "query": [],
     "service": "fitnessage-service"
@@ -286,6 +701,15 @@ export const CATALOG: CatalogEntry[] = [
     "service": "fitnessstats-service"
   },
   {
+    "name": "fitnessstats-activity-animal-dog-stats-lifetime",
+    "path": "/fitnessstats-service/activity-animal/dog/stats/lifetime",
+    "params": [],
+    "query": [
+      "metric"
+    ],
+    "service": "fitnessstats-service"
+  },
+  {
     "name": "fitnessstats-activity-available-metrics",
     "path": "/fitnessstats-service/activity/availableMetrics",
     "params": [],
@@ -295,6 +719,82 @@ export const CATALOG: CatalogEntry[] = [
       "startDate"
     ],
     "service": "fitnessstats-service"
+  },
+  {
+    "name": "fitnessstats-activity-user-avg-speed",
+    "path": "/fitnessstats-service/activity/userAvgSpeed",
+    "params": [],
+    "query": [
+      "activityType"
+    ],
+    "service": "fitnessstats-service"
+  },
+  {
+    "name": "gear-activity-v2",
+    "path": "/gear-service/activity/v2/{id}",
+    "params": [
+      "id"
+    ],
+    "query": [],
+    "service": "gear-service"
+  },
+  {
+    "name": "gear-collection-available",
+    "path": "/gear-service/collection/available/{date}",
+    "params": [
+      "date"
+    ],
+    "query": [],
+    "service": "gear-service"
+  },
+  {
+    "name": "gear-v2",
+    "path": "/gear-service/gear/v2/{guid}",
+    "params": [
+      "guid"
+    ],
+    "query": [],
+    "service": "gear-service"
+  },
+  {
+    "name": "gear-v2-available",
+    "path": "/gear-service/gear/v2/available/{date}",
+    "params": [
+      "date"
+    ],
+    "query": [],
+    "service": "gear-service"
+  },
+  {
+    "name": "gear-v2-list",
+    "path": "/gear-service/gear/v2/list",
+    "params": [],
+    "query": [
+      "gearStatuses",
+      "limit",
+      "sortOrder",
+      "start"
+    ],
+    "service": "gear-service"
+  },
+  {
+    "name": "gear-v2-user-gear-types",
+    "path": "/gear-service/gear/v2/user-gear-types",
+    "params": [],
+    "query": [],
+    "service": "gear-service"
+  },
+  {
+    "name": "goal-goals",
+    "path": "/goal-service/goal/goals",
+    "params": [],
+    "query": [
+      "limit",
+      "sortOrder",
+      "start",
+      "status"
+    ],
+    "service": "goal-service"
   },
   {
     "name": "goal-user-effective",
@@ -314,6 +814,55 @@ export const CATALOG: CatalogEntry[] = [
     ],
     "query": [],
     "service": "goal-service"
+  },
+  {
+    "name": "group-groups",
+    "path": "/group-service/groups/{displayName}",
+    "params": [
+      "displayName"
+    ],
+    "query": [
+      "includeMembership"
+    ],
+    "service": "group-service"
+  },
+  {
+    "name": "group-private-group-request-user",
+    "path": "/group-service/private/group/request/user/{displayName}",
+    "params": [
+      "displayName"
+    ],
+    "query": [],
+    "service": "group-service"
+  },
+  {
+    "name": "group-request-not-handled",
+    "path": "/group-service/requestNotHandled/{displayName}",
+    "params": [
+      "displayName"
+    ],
+    "query": [],
+    "service": "group-service"
+  },
+  {
+    "name": "groupchallenge-history-user-joined",
+    "path": "/groupchallenge-service/groupchallenge/history/userJoined",
+    "params": [],
+    "query": [
+      "limit",
+      "start"
+    ],
+    "service": "groupchallenge-service"
+  },
+  {
+    "name": "groupchallenge-non-completed",
+    "path": "/groupchallenge-service/groupchallenge/nonCompleted",
+    "params": [],
+    "query": [
+      "limit",
+      "start"
+    ],
+    "service": "groupchallenge-service"
   },
   {
     "name": "hrv",
@@ -386,6 +935,16 @@ export const CATALOG: CatalogEntry[] = [
     "service": "metrics-service"
   },
   {
+    "name": "metrics-maxmet-monthly",
+    "path": "/metrics-service/metrics/maxmet/monthly/{startDate}/{endDate}",
+    "params": [
+      "startDate",
+      "endDate"
+    ],
+    "query": [],
+    "service": "metrics-service"
+  },
+  {
     "name": "metrics-maxmet-weekly",
     "path": "/metrics-service/metrics/maxmet/weekly/{startDate}/{endDate}",
     "params": [
@@ -437,6 +996,15 @@ export const CATALOG: CatalogEntry[] = [
     "service": "metrics-service"
   },
   {
+    "name": "notification-inbox",
+    "path": "/notification-service/notification/inbox",
+    "params": [],
+    "query": [
+      "limit"
+    ],
+    "service": "notification-service"
+  },
+  {
     "name": "nutrition-food-logs",
     "path": "/nutrition-service/food/logs/{date}",
     "params": [
@@ -474,11 +1042,36 @@ export const CATALOG: CatalogEntry[] = [
     "service": "nutrition-service"
   },
   {
+    "name": "periodichealth-menstrualcycle-dayview",
+    "path": "/periodichealth-service/menstrualcycle/dayview/{date}",
+    "params": [
+      "date"
+    ],
+    "query": [
+      "todayDate"
+    ],
+    "service": "periodichealth-service"
+  },
+  {
     "name": "periodichealth-menstrualcycle-pregnancysnapshot-all",
     "path": "/periodichealth-service/menstrualcycle/pregnancysnapshot/all",
     "params": [],
     "query": [],
     "service": "periodichealth-service"
+  },
+  {
+    "name": "personalapitoken-personal-api-personal-api-key",
+    "path": "/personalapitoken-service/personal-api/personal-api-key",
+    "params": [],
+    "query": [],
+    "service": "personalapitoken-service"
+  },
+  {
+    "name": "personalapitoken-personal-api-personal-api-key-permissions",
+    "path": "/personalapitoken-service/personal-api/personal-api-key-permissions",
+    "params": [],
+    "query": [],
+    "service": "personalapitoken-service"
   },
   {
     "name": "personalrecord-personalrecordcandidate",
@@ -499,6 +1092,17 @@ export const CATALOG: CatalogEntry[] = [
     "service": "personalrecord-service"
   },
   {
+    "name": "personalrecord-pr-by-activity-id",
+    "path": "/personalrecord-service/personalrecord/prByActivityId/{id}",
+    "params": [
+      "id"
+    ],
+    "query": [
+      "includeAllTypes"
+    ],
+    "service": "personalrecord-service"
+  },
+  {
     "name": "personalrecord-prs",
     "path": "/personalrecord-service/personalrecord/prs/{displayName}",
     "params": [
@@ -508,6 +1112,55 @@ export const CATALOG: CatalogEntry[] = [
       "includeHistory"
     ],
     "service": "personalrecord-service"
+  },
+  {
+    "name": "privacysettings-privacy-settings",
+    "path": "/privacysettings-service/privacy-settings",
+    "params": [],
+    "query": [],
+    "service": "privacysettings-service"
+  },
+  {
+    "name": "segment",
+    "path": "/segment-service/segment/{guid}",
+    "params": [
+      "guid"
+    ],
+    "query": [],
+    "service": "segment-service"
+  },
+  {
+    "name": "segment-classifications",
+    "path": "/segment-service/segment/classifications",
+    "params": [],
+    "query": [],
+    "service": "segment-service"
+  },
+  {
+    "name": "segment-leaderboard-segment-rank",
+    "path": "/segment-service/leaderboard/segment/{guid}/rank/{displayName}",
+    "params": [
+      "guid",
+      "displayName"
+    ],
+    "query": [],
+    "service": "segment-service"
+  },
+  {
+    "name": "segment-list",
+    "path": "/segment-service/segment/list/{id}",
+    "params": [
+      "id"
+    ],
+    "query": [],
+    "service": "segment-service"
+  },
+  {
+    "name": "segment-surface-types",
+    "path": "/segment-service/segment/surfaceTypes",
+    "params": [],
+    "query": [],
+    "service": "segment-service"
   },
   {
     "name": "sleep-daily-sleep-data",
@@ -541,6 +1194,38 @@ export const CATALOG: CatalogEntry[] = [
     "service": "sleep-service"
   },
   {
+    "name": "socialgroupride-v2-social-group-ride-null",
+    "path": "/socialgroupride-service/v2/social-group-ride/null",
+    "params": [],
+    "query": [
+      "activityId"
+    ],
+    "service": "socialgroupride-service"
+  },
+  {
+    "name": "userfocus-dashboard",
+    "path": "/userfocus-service/dashboard",
+    "params": [],
+    "query": [
+      "nutritionMigrationAllowed"
+    ],
+    "service": "userfocus-service"
+  },
+  {
+    "name": "userfocus-focus",
+    "path": "/userfocus-service/focus",
+    "params": [],
+    "query": [],
+    "service": "userfocus-service"
+  },
+  {
+    "name": "userfocus-focus-suggested-focuses",
+    "path": "/userfocus-service/focus/suggestedFocuses",
+    "params": [],
+    "query": [],
+    "service": "userfocus-service"
+  },
+  {
     "name": "userprofile-biometric-current",
     "path": "/userprofile-service/biometric/current/{displayName}",
     "params": [
@@ -550,8 +1235,43 @@ export const CATALOG: CatalogEntry[] = [
     "service": "userprofile-service"
   },
   {
+    "name": "userprofile-capable-enable-auto-detected-activity-capable",
+    "path": "/userprofile-service/userprofile/capableEnable/autoDetectedActivityCapable",
+    "params": [],
+    "query": [],
+    "service": "userprofile-service"
+  },
+  {
     "name": "userprofile-capable-enable-pulse-ox-capable",
     "path": "/userprofile-service/userprofile/capableEnable/pulseOxCapable",
+    "params": [],
+    "query": [],
+    "service": "userprofile-service"
+  },
+  {
+    "name": "userprofile-optional-feature-dog-activities",
+    "path": "/userprofile-service/userprofile/optional-feature/dog-activities",
+    "params": [],
+    "query": [],
+    "service": "userprofile-service"
+  },
+  {
+    "name": "userprofile-optional-feature-segment-leaderboard",
+    "path": "/userprofile-service/userprofile/optional-feature/segment-leaderboard",
+    "params": [],
+    "query": [],
+    "service": "userprofile-service"
+  },
+  {
+    "name": "userprofile-optional-feature-strava-segments",
+    "path": "/userprofile-service/userprofile/optional-feature/strava-segments",
+    "params": [],
+    "query": [],
+    "service": "userprofile-service"
+  },
+  {
+    "name": "userprofile-optional-feature-tagging",
+    "path": "/userprofile-service/userprofile/optional-feature/tagging",
     "params": [],
     "query": [],
     "service": "userprofile-service"
@@ -585,6 +1305,22 @@ export const CATALOG: CatalogEntry[] = [
     "service": "userprofile-service"
   },
   {
+    "name": "userprofile-social-profile-image",
+    "path": "/userprofile-service/socialProfile/image",
+    "params": [],
+    "query": [],
+    "service": "userprofile-service"
+  },
+  {
+    "name": "userprofile-social-profile-privacy",
+    "path": "/userprofile-service/socialProfile/privacy/{displayName}",
+    "params": [
+      "displayName"
+    ],
+    "query": [],
+    "service": "userprofile-service"
+  },
+  {
     "name": "userprofile-social-profile-v2-public-multiple-id",
     "path": "/userprofile-service/socialProfile/v2/public/multiple/id",
     "params": [],
@@ -592,6 +1328,13 @@ export const CATALOG: CatalogEntry[] = [
       "image-version",
       "userId"
     ],
+    "service": "userprofile-service"
+  },
+  {
+    "name": "userprofile-user-profile-base",
+    "path": "/userprofile-service/userprofile/userProfileBase",
+    "params": [],
+    "query": [],
     "service": "userprofile-service"
   },
   {
@@ -659,6 +1402,20 @@ export const CATALOG: CatalogEntry[] = [
       "grpParentActType",
       "metricId",
       "untilDate"
+    ],
+    "service": "userstats-service"
+  },
+  {
+    "name": "userstats-wellness-monthly",
+    "path": "/userstats-service/wellness/monthly/{displayName}",
+    "params": [
+      "displayName"
+    ],
+    "query": [
+      "fromMonthStartDate",
+      "grpParentActType",
+      "metricId",
+      "untilMonthStartDate"
     ],
     "service": "userstats-service"
   },
@@ -755,6 +1512,59 @@ export const CATALOG: CatalogEntry[] = [
     ],
     "query": [],
     "service": "usersummary-service"
+  },
+  {
+    "name": "usersummary-stats-wellness-leaderboard-following",
+    "path": "/usersummary-service/stats/wellness/leaderboard/FOLLOWING",
+    "params": [],
+    "query": [
+      "endDate",
+      "limit",
+      "metricId",
+      "start",
+      "startDate"
+    ],
+    "service": "usersummary-service"
+  },
+  {
+    "name": "vivokidchallenge-ad-hoc-challenge-historical",
+    "path": "/vivokidchallenge-service/adHocChallenge/historical",
+    "params": [],
+    "query": [
+      "limit",
+      "start"
+    ],
+    "service": "vivokidchallenge-service"
+  },
+  {
+    "name": "vivokidchallenge-ad-hoc-challenge-non-completed",
+    "path": "/vivokidchallenge-service/adHocChallenge/nonCompleted",
+    "params": [],
+    "query": [
+      "limit",
+      "start"
+    ],
+    "service": "vivokidchallenge-service"
+  },
+  {
+    "name": "vivokidchallenge-team-challenge-historical",
+    "path": "/vivokidchallenge-service/teamChallenge/historical",
+    "params": [],
+    "query": [
+      "limit",
+      "start"
+    ],
+    "service": "vivokidchallenge-service"
+  },
+  {
+    "name": "vivokidchallenge-team-challenge-non-completed",
+    "path": "/vivokidchallenge-service/teamChallenge/nonCompleted",
+    "params": [],
+    "query": [
+      "limit",
+      "start"
+    ],
+    "service": "vivokidchallenge-service"
   },
   {
     "name": "weight-dayview",
@@ -942,5 +1752,57 @@ export const CATALOG: CatalogEntry[] = [
     ],
     "query": [],
     "service": "wellnessactivity-service"
+  },
+  {
+    "name": "workout",
+    "path": "/workout-service/workout/{id}",
+    "params": [
+      "id"
+    ],
+    "query": [],
+    "service": "workout-service"
+  },
+  {
+    "name": "workout-types",
+    "path": "/workout-service/workout/types",
+    "params": [],
+    "query": [],
+    "service": "workout-service"
+  },
+  {
+    "name": "workout-types-sport",
+    "path": "/workout-service/workout/types/sport",
+    "params": [],
+    "query": [],
+    "service": "workout-service"
+  },
+  {
+    "name": "workout-workouts",
+    "path": "/workout-service/workouts",
+    "params": [],
+    "query": [
+      "includeAtp",
+      "limit",
+      "myWorkoutsOnly",
+      "orderBy",
+      "orderSeq",
+      "sharedWorkoutsOnly",
+      "start"
+    ],
+    "service": "workout-service"
+  },
+  {
+    "name": "workout-workouts-sport-types",
+    "path": "/workout-service/workouts/sport-types",
+    "params": [],
+    "query": [],
+    "service": "workout-service"
+  },
+  {
+    "name": "workout-workouts-sport-types-count",
+    "path": "/workout-service/workouts/sport-types/count",
+    "params": [],
+    "query": [],
+    "service": "workout-service"
   }
 ];
