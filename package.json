@@ -16,6 +16,7 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit -p tsconfig.test.json",
     "test": "node --test \"test/*.test.ts\"",
+    "build:openapi": "node tools/build_openapi.ts",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": { "@types/node": "^22.20.3", "typescript": "^5.9.0" },
