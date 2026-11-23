@@ -17,6 +17,10 @@ writes, and returns the same JSON as `gc`, so it can replace the CLI inside a No
   (`garmin-ts connect list`). They return the raw payload; the table is generated from `docs/garmin-connect.openapi.json`
   by `tools/build_catalog.ts` and shared with `gc connect`. 176 of them answered a read-only probe on a live account; some need
   query parameters the capture could not record (see `connect list` usage).
+- **FIT files**: `decodeFit()` is a small dependency-free FIT decoder (records and session, CRC verified, typed). `activityDescent(client, id)`
+  downloads an activity's FIT and returns its descent split by grade (`descentM`, `steepDescentM` at 15 % or more, a grade-weighted
+  `eccentricUnits`) for muscular-load analysis: `garmin-ts activity <id> descent`. The decoder is adapted from the FIT parser of the CFD MV
+  track joiner (MIT), itself adapted from jimmykane/fit-parser (MIT).
 - A raw `get(path, params)` for exploring endpoints.
 
 ## Logging in

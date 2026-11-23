@@ -1,3 +1,6 @@
+export * from "./fit.ts";
+export * from "./descent.ts";
+export * from "./activityFile.ts";
 export * from "./activities.ts";
 export * from "./client.ts";
 export * from "./connect.ts";

@@ -2,6 +2,7 @@
 /** Small CLI for checks and exploration. JSON on stdout, errors as `{ "error": code }` on stderr with exit 1. */
 import { createInterface } from "node:readline/promises";
 import { parseArgs } from "node:util";
+import { activityDescent } from "./activityFile.ts";
 import { activityExerciseSets, activityHrZones, activitySplits, activityWeather, getActivity, listActivities } from "./activities.ts";
 import { GarminClient } from "./client.ts";
 import { daily } from "./daily.ts";
@@ -19,7 +20,7 @@ const USAGE = `garmin-ts <command> [options]
 
   daily [date|today|yesterday|week|month] [--start D --end D] [--detail|--no-detail]
   activities [--start D --end D] [--type T]
-  activity <id> [splits|hr-zones|weather|exercise-sets]
+  activity <id> [splits|hr-zones|weather|exercise-sets|descent]
   metrics <training-readiness|training-status|load-balance> [date] | metrics maxmet [--start D --end D] | metrics lactate-threshold | metrics anchors
   workouts [--start N --limit N] | workouts <get|download|scheduled|delete> <id> [--output FILE]
   workouts <create|update <id>> [--name N --sport S --sport-id N --steps JSON | --file F]
@@ -102,6 +103,8 @@ async function main(): Promise<unknown> {
       if (!id) throw new GarminError("error", "activity needs an id.");
       const calls = { splits: activitySplits, "hr-zones": activityHrZones, weather: activityWeather, "exercise-sets": activityExerciseSets };
       if (!what) return getActivity(client, id);
+      // Downloads the FIT file (one request) and analyses its altitude trace.
+      if (what === "descent") return activityDescent(client, id);
       const call = calls[what as keyof typeof calls];
       if (!call) throw new GarminError("error", `Unknown activity view '${what}'.`);
       return call(client, id);
